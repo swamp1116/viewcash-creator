@@ -12,7 +12,9 @@ export async function POST() {
     const existingIgs = new Set(existing?.map((c) => c.instagram) || []);
 
     const results = await crawlCreators(15, (msg) => console.log(msg));
-    const newResults = results.filter((c) => !existingIgs.has(c.instagram));
+    const newResults = results.filter(
+      (c) => !existingIgs.has(c.instagram) && c.followers <= 200000
+    );
 
     if (newResults.length === 0) {
       return NextResponse.json({ message: "신규 크리에이터 없음", count: 0 });

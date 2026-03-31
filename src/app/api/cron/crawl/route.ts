@@ -15,7 +15,9 @@ export async function GET() {
 
     // 매시간 랜덤 20개 키워드로 크롤링
     const results = await crawlCreators(20, (msg) => console.log(msg));
-    const newResults = results.filter((c) => !existingIgs.has(c.instagram));
+    const newResults = results.filter(
+      (c) => !existingIgs.has(c.instagram) && c.followers <= 200000
+    );
 
     if (newResults.length === 0) {
       return NextResponse.json({ message: "신규 없음", count: 0 });
