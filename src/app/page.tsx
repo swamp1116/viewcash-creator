@@ -229,6 +229,9 @@ export default function Dashboard() {
                     크리에이터
                   </th>
                   <th className="px-4 py-3 text-left font-medium text-gray-600">
+                    팔로워
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-600">
                     인스타
                   </th>
                   <th className="px-4 py-3 text-left font-medium text-gray-600">
@@ -247,6 +250,13 @@ export default function Dashboard() {
                   <tr key={c.id} className="hover:bg-gray-50 transition">
                     <td className="px-4 py-3 font-semibold text-gray-900">
                       {c.name}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600 text-xs">
+                      {c.followers >= 10000
+                        ? `${(c.followers / 10000).toFixed(1).replace(/\.0$/, "")}만`
+                        : c.followers > 0
+                          ? c.followers.toLocaleString()
+                          : "-"}
                     </td>
                     <td className="px-4 py-3">
                       <a
