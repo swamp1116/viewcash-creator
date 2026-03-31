@@ -168,7 +168,7 @@ export default function Dashboard() {
             <div className="bg-white rounded-xl shadow-sm border p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500">DM 발송완료</p>
+                  <p className="text-sm text-gray-500">DM발송완료</p>
                   <p className="text-3xl font-bold mt-1">{stats.sent}</p>
                   <p className="text-xs text-gray-400 mt-1">
                     대기 {stats.pending}
@@ -203,7 +203,7 @@ export default function Dashboard() {
               {[
                 { label: "전체", value: "" },
                 { label: "발송대기", value: "pending" },
-                { label: "발송완료", value: "sent" },
+                { label: "DM발송완료", value: "sent" },
                 { label: "답장옴", value: "replied" },
               ].map((f) => (
                 <button
@@ -306,7 +306,7 @@ export default function Dashboard() {
                       ) : c.dm_status === "sent" ? (
                         <div className="flex items-center gap-1">
                           <span className="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-xs font-medium">
-                            발송완료
+                            DM발송완료
                           </span>
                           <button
                             onClick={() =>
