@@ -1,6 +1,6 @@
 /**
  * 한국인 인스타 크리에이터 대규모 수집
- * 네이버 검색 기반, 팔로워 1,000~50,000명 타겟
+ * 네이버 검색 기반, 팔로워 1,000~200,000명 타겟
  */
 
 const HEADERS = {
@@ -9,115 +9,89 @@ const HEADERS = {
   "Accept-Language": "ko-KR,ko;q=0.9",
 };
 
-const SEARCH_QUERIES: { query: string; category: string }[] = [
-  // 일상
-  { query: "한국 인스타 일상 크리에이터", category: "일상" },
-  { query: "인스타 브이로그 크리에이터 한국", category: "일상" },
-  { query: "인스타 일상계정 추천", category: "일상" },
-  { query: "인스타그램 한국 마이크로 인플루언서", category: "일상" },
-  { query: "인스타 감성 계정 추천 한국", category: "일상" },
-  { query: "인스타 셀카 계정 한국 추천", category: "일상" },
-  { query: "한국 인스타 소통 계정 추천", category: "일상" },
-  // 뷰티
-  { query: "한국 뷰티 인플루언서 인스타", category: "뷰티" },
-  { query: "인스타 뷰티 크리에이터 추천", category: "뷰티" },
-  { query: "뷰티 유튜버 인스타그램 한국", category: "뷰티" },
-  { query: "메이크업 크리에이터 한국 인스타", category: "뷰티" },
-  { query: "인스타 스킨케어 크리에이터 추천", category: "뷰티" },
-  { query: "한국 화장품 리뷰 인플루언서", category: "뷰티" },
-  { query: "뷰티 마이크로 인플루언서 한국", category: "뷰티" },
-  // 패션
-  { query: "한국 패션 인플루언서 인스타", category: "패션" },
-  { query: "인스타 패션 크리에이터 추천", category: "패션" },
-  { query: "OOTD 크리에이터 한국 인스타", category: "패션" },
-  { query: "스트릿 패션 인스타 한국", category: "패션" },
-  { query: "한국 코디 추천 인플루언서 인스타", category: "패션" },
-  { query: "빈티지 패션 크리에이터 한국", category: "패션" },
-  { query: "남자 패션 인플루언서 인스타", category: "패션" },
-  // 음식
-  { query: "먹방 크리에이터 인스타 한국", category: "음식" },
-  { query: "음식 인플루언서 한국 인스타", category: "음식" },
-  { query: "맛집 크리에이터 인스타그램 추천", category: "음식" },
-  { query: "홈쿡 인스타 크리에이터 한국", category: "음식" },
-  { query: "한국 카페 리뷰 인플루언서 인스타", category: "음식" },
-  { query: "디저트 크리에이터 인스타 추천", category: "음식" },
-  { query: "자취 요리 인스타 크리에이터", category: "음식" },
-  // 여행
-  { query: "여행 크리에이터 인스타 한국", category: "여행" },
-  { query: "한국 여행 인플루언서 추천", category: "여행" },
-  { query: "트래블 크리에이터 인스타그램", category: "여행" },
-  { query: "국내여행 인스타 크리에이터 추천", category: "여행" },
-  { query: "해외여행 인플루언서 한국 인스타", category: "여행" },
-  { query: "호캉스 인스타 추천 계정", category: "여행" },
-  // 운동
-  { query: "운동 크리에이터 인스타 한국", category: "운동" },
-  { query: "피트니스 인플루언서 한국 인스타", category: "운동" },
-  { query: "홈트 크리에이터 인스타그램 추천", category: "운동" },
-  { query: "필라테스 인스타 크리에이터 한국", category: "운동" },
-  { query: "헬스 인플루언서 인스타 추천", category: "운동" },
-  { query: "요가 크리에이터 인스타 한국", category: "운동" },
-  { query: "러닝 크리에이터 인스타 추천", category: "운동" },
-  // 게임
-  { query: "게임 크리에이터 인스타 한국", category: "게임" },
-  { query: "한국 게이머 인스타그램 추천", category: "게임" },
-  { query: "모바일게임 인플루언서 인스타", category: "게임" },
-  { query: "게임 유튜버 인스타 한국", category: "게임" },
-  // 펫
-  { query: "반려동물 크리에이터 인스타 한국", category: "펫" },
-  { query: "강아지 인스타 인플루언서 추천", category: "펫" },
-  { query: "고양이 크리에이터 한국 인스타", category: "펫" },
-  { query: "펫 인플루언서 한국 추천", category: "펫" },
-  { query: "반려견 인스타 추천 계정", category: "펫" },
-  // 육아
-  { query: "육아 크리에이터 인스타 한국", category: "육아" },
-  { query: "맘스타그래머 추천 계정", category: "육아" },
-  { query: "한국 육아 인플루언서 인스타", category: "육아" },
-  { query: "아기 인스타 육아 계정", category: "육아" },
-  // 공부
-  { query: "공부 크리에이터 인스타 한국", category: "공부" },
-  { query: "스터디그램 추천 계정 한국", category: "공부" },
-  { query: "공스타그램 인플루언서 추천", category: "공부" },
-  { query: "수험생 인스타 계정 추천", category: "공부" },
-  // 직장인
-  { query: "직장인 인스타 크리에이터 한국", category: "직장인" },
-  { query: "퇴근 후 인스타 계정 추천", category: "직장인" },
-  { query: "사회초년생 인스타 인플루언서", category: "직장인" },
-  // 요리
-  { query: "요리 크리에이터 인스타 한국", category: "요리" },
-  { query: "레시피 인플루언서 인스타 추천", category: "요리" },
-  { query: "집밥 크리에이터 인스타 한국", category: "요리" },
-  { query: "베이킹 인스타 크리에이터 추천", category: "요리" },
-  // 인테리어
-  { query: "인테리어 크리에이터 인스타 한국", category: "인테리어" },
-  { query: "집꾸미기 인스타 추천 계정", category: "인테리어" },
-  { query: "홈스타그래머 인플루언서 한국", category: "인테리어" },
-  { query: "원룸 인테리어 인스타 추천", category: "인테리어" },
-  // 재테크
-  { query: "재테크 인스타 크리에이터 한국", category: "재테크" },
-  { query: "주식 인플루언서 인스타 추천", category: "재테크" },
-  { query: "부동산 인스타 크리에이터", category: "재테크" },
-  { query: "절약 인스타 계정 추천 한국", category: "재테크" },
-  // 연예/댄스
-  { query: "댄스 크리에이터 인스타 한국", category: "댄스" },
-  { query: "커버댄스 인플루언서 인스타", category: "댄스" },
-  { query: "K-pop 댄스 크리에이터 인스타", category: "댄스" },
-  // 음악
-  { query: "음악 크리에이터 인스타 한국", category: "음악" },
-  { query: "싱어송라이터 인스타 추천 한국", category: "음악" },
-  { query: "커버 가수 인스타 크리에이터", category: "음악" },
-  { query: "기타 연주 인스타 크리에이터", category: "음악" },
-  // 사진
-  { query: "사진 크리에이터 인스타 한국", category: "사진" },
-  { query: "포토그래퍼 인스타 추천 한국", category: "사진" },
-  { query: "인스타 감성사진 크리에이터", category: "사진" },
-  { query: "필름카메라 인스타 계정 추천", category: "사진" },
-  // 자연/캠핑
-  { query: "캠핑 크리에이터 인스타 한국", category: "캠핑" },
-  { query: "차박 인플루언서 인스타 추천", category: "캠핑" },
-  { query: "등산 크리에이터 인스타 한국", category: "캠핑" },
-  { query: "자연 인스타 계정 추천 한국", category: "캠핑" },
-  { query: "백패킹 인스타 크리에이터", category: "캠핑" },
-];
+// 카테고리별 키워드 풀
+const KEYWORD_POOL: Record<string, string[]> = {
+  일상: [
+    "인스타 일상계정 추천", "인스타 감성계정 추천 한국", "한국 마이크로인플루언서 추천",
+    "인스타 소통계정 추천", "인스타 셀카계정 한국", "인스타 브이로그 추천",
+    "인스타 일상 릴스 추천", "인스타 갬성 피드 추천", "20대 인스타 추천 계정",
+    "30대 인스타 일상 추천", "인스타 팔로우 추천 한국",
+  ],
+  뷰티: [
+    "뷰티인플루언서 추천", "메이크업 인스타 추천 한국", "스킨케어 인스타 추천",
+    "화장품리뷰 인스타", "뷰티크리에이터 한국", "뷰스타그램 추천",
+    "데일리메이크업 인스타", "립스틱추천 인스타", "파데추천 인스타 크리에이터",
+  ],
+  패션: [
+    "패션인플루언서 인스타 추천", "OOTD 인스타 추천 한국", "코디추천 인스타",
+    "스트릿패션 인스타 한국", "빈티지 패션 인스타", "남자패션 인스타 추천",
+    "여자코디 인스타 추천", "쇼핑몰 인스타 크리에이터", "패피 인스타 추천",
+  ],
+  음식: [
+    "먹방 인스타 추천", "맛집 인스타 크리에이터", "홈쿡 인스타 추천",
+    "카페추천 인스타 한국", "디저트 인스타 추천", "자취요리 인스타",
+    "푸드스타그램 추천", "맛스타그램 인플루언서", "술스타그램 추천 계정",
+  ],
+  여행: [
+    "여행 인스타 추천", "국내여행 인스타 크리에이터", "해외여행 인스타 추천",
+    "호캉스 인스타 추천", "트래블스타그램 추천", "제주 인스타 크리에이터",
+    "유럽여행 인스타 추천", "동남아여행 인스타", "일본여행 인스타 추천",
+  ],
+  운동: [
+    "운동 인스타 추천", "피트니스 인플루언서 한국", "홈트 인스타 추천",
+    "필라테스 인스타 크리에이터", "헬스 인스타 추천", "요가 인스타 추천",
+    "러닝 인스타 크리에이터", "다이어트 인스타 추천", "크로스핏 인스타",
+  ],
+  게임: [
+    "게임 인스타 추천 한국", "게이머 인스타그램", "모바일게임 인플루언서",
+    "게임유튜버 인스타", "스트리머 인스타 추천", "게임방송 인스타",
+  ],
+  펫: [
+    "강아지 인스타 추천", "고양이 인스타 추천", "반려동물 인플루언서",
+    "펫스타그램 추천", "멍스타그램 추천", "냥스타그램 추천 계정",
+    "펫유튜버 인스타", "강아지일상 인스타",
+  ],
+  육아: [
+    "육아 인스타 추천", "맘스타그래머 추천", "아기인스타 추천",
+    "육아인플루언서 한국", "워킹맘 인스타", "육아브이로그 인스타",
+  ],
+  공부: [
+    "공스타그램 추천", "스터디그램 추천", "공부계정 인스타 추천",
+    "수험생 인스타", "공부브이로그 인스타", "필기 인스타 추천",
+  ],
+  직장인: [
+    "직장인 인스타 추천", "사회초년생 인스타", "퇴근후 인스타 추천",
+    "직장인브이로그 인스타", "N잡러 인스타 추천",
+  ],
+  요리: [
+    "요리 인스타 추천", "레시피 인스타 크리에이터", "집밥 인스타 추천",
+    "베이킹 인스타 추천", "요리유튜버 인스타", "간단요리 인스타",
+  ],
+  인테리어: [
+    "인테리어 인스타 추천", "집꾸미기 인스타", "홈스타그래머 추천",
+    "원룸인테리어 인스타", "셀프인테리어 인스타", "가구추천 인스타",
+  ],
+  재테크: [
+    "재테크 인스타 추천", "주식 인스타 크리에이터", "절약 인스타 추천",
+    "부업 인스타 추천", "투자 인스타 추천", "재테크인플루언서",
+  ],
+  댄스: [
+    "댄스 인스타 추천 한국", "커버댄스 인스타", "K-pop댄스 인스타",
+    "댄스크리에이터 인스타", "안무 인스타 추천",
+  ],
+  음악: [
+    "음악 인스타 추천", "싱어송라이터 인스타", "커버가수 인스타",
+    "기타연주 인스타", "피아노 인스타 크리에이터", "보컬 인스타 추천",
+  ],
+  사진: [
+    "사진 인스타 추천", "포토그래퍼 인스타 한국", "감성사진 인스타",
+    "필름카메라 인스타", "사진작가 인스타 추천", "스냅사진 인스타",
+  ],
+  캠핑: [
+    "캠핑 인스타 추천", "차박 인스타", "등산 인스타 추천",
+    "백패킹 인스타", "캠핑크리에이터 인스타", "아웃도어 인스타",
+  ],
+};
 
 export type CrawledCreator = {
   name: string;
@@ -127,35 +101,33 @@ export type CrawledCreator = {
 };
 
 function extractInstagramHandles(html: string): string[] {
-  const patterns = [
-    /instagram\.com\/([a-zA-Z0-9._]{2,30})/g,
-    /@([a-zA-Z0-9._]{3,30})/g,
-  ];
+  // instagram.com/handle 패턴만 사용 (@는 노이즈가 많아서 제외)
+  const pattern = /instagram\.com\/([a-zA-Z0-9._]{3,30})/g;
 
   const blocked = new Set([
     "p", "reel", "reels", "explore", "stories", "accounts", "about",
     "developer", "legal", "help", "privacy", "terms", "api", "press",
     "blog", "jobs", "nametag", "session", "login", "emails", "signup",
     "download", "challenge", "direct", "lite", "web", "tv", "igtv",
-    "shopping", "shop", "creator", "business", "music",
+    "shopping", "shop", "creator", "business", "music", "directory",
+    "ar", "branded_content", "professional", "static",
   ]);
 
   const handles = new Set<string>();
-  for (const p of patterns) {
-    let match;
-    while ((match = p.exec(html)) !== null) {
-      const handle = match[1].toLowerCase();
-      if (
-        handle.length >= 3 &&
-        handle.length <= 30 &&
-        !handle.includes("...") &&
-        !handle.startsWith(".") &&
-        !handle.endsWith(".") &&
-        !blocked.has(handle) &&
-        !/^\d+$/.test(handle)
-      ) {
-        handles.add(handle);
-      }
+  let match;
+  while ((match = pattern.exec(html)) !== null) {
+    const handle = match[1].toLowerCase();
+    if (
+      handle.length >= 3 &&
+      handle.length <= 30 &&
+      !handle.includes("...") &&
+      !handle.startsWith(".") &&
+      !handle.endsWith(".") &&
+      !blocked.has(handle) &&
+      !/^\d+$/.test(handle) &&
+      !/^[a-f0-9]{20,}$/.test(handle)
+    ) {
+      handles.add(handle);
     }
   }
 
@@ -166,17 +138,38 @@ export async function crawlCreators(
   keywordCount: number = 10,
   onProgress?: (msg: string) => void
 ): Promise<CrawledCreator[]> {
-  const shuffled = [...SEARCH_QUERIES].sort(() => Math.random() - 0.5);
-  const selected = shuffled.slice(0, keywordCount);
-
   const allResults: CrawledCreator[] = [];
   const seenHandles = new Set<string>();
 
-  for (const { query, category } of selected) {
-    onProgress?.(`검색: ${query}`);
+  // 각 카테고리에서 랜덤으로 키워드 선택
+  const categories = Object.keys(KEYWORD_POOL);
+  const selectedQueries: { query: string; category: string }[] = [];
+
+  // 카테고리별로 균등 분배
+  const perCategory = Math.max(1, Math.ceil(keywordCount / categories.length));
+  for (const cat of categories) {
+    const pool = KEYWORD_POOL[cat];
+    const shuffled = [...pool].sort(() => Math.random() - 0.5);
+    for (let i = 0; i < Math.min(perCategory, shuffled.length); i++) {
+      selectedQueries.push({ query: shuffled[i], category: cat });
+    }
+  }
+
+  // 전체를 셔플하고 keywordCount만큼 자르기
+  const finalQueries = selectedQueries
+    .sort(() => Math.random() - 0.5)
+    .slice(0, keywordCount);
+
+  // 네이버 블로그 검색도 병행 (다른 결과가 나옴)
+  const searchTypes = ["nexearch", "blog"];
+
+  for (const { query, category } of finalQueries) {
+    // 랜덤으로 검색 타입 선택
+    const searchType = searchTypes[Math.floor(Math.random() * searchTypes.length)];
+    onProgress?.(`검색: ${query} (${searchType})`);
 
     try {
-      const url = `https://search.naver.com/search.naver?where=nexearch&query=${encodeURIComponent(query)}`;
+      const url = `https://search.naver.com/search.naver?where=${searchType}&query=${encodeURIComponent(query)}`;
       const res = await fetch(url, { headers: HEADERS });
       if (!res.ok) continue;
       const html = await res.text();
@@ -200,7 +193,7 @@ export async function crawlCreators(
       continue;
     }
 
-    await new Promise((r) => setTimeout(r, 600));
+    await new Promise((r) => setTimeout(r, 500 + Math.random() * 500));
   }
 
   return allResults;
