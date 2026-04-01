@@ -1,35 +1,51 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { crawlCreators } from "@/lib/crawler";
 import { getServiceClient, generateDm } from "@/lib/supabase";
 
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+function isAuthorized(req: NextRequest): boolean {
+  const ua = req.headers.get("user-agent") || "";
+  if (ua.includes("vercel-cron")) return true;
+
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret) {
+    const authHeader = req.headers.get("authorization");
+    if (authHeader === `Bearer ${cronSecret}`) return true;
+  }
+
+  if (!process.env.CRON_SECRET) return true;
+
+  return false;
+}
+
+export async function GET(req: NextRequest) {
+  if (!isAuthorized(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const supabase = getServiceClient();
 
   try {
-    // 기존 인스타 핸들 조회 (중복 방지)
     const { data: existing } = await supabase.from("creators").select("instagram");
     const existingIgs = new Set(existing?.map((c) => c.instagram) || []);
 
-    // 매시간 랜덤 20개 키워드로 크롤링
     const results = await crawlCreators(20, (msg) => console.log(msg));
     const newResults = results.filter(
       (c) => !existingIgs.has(c.instagram) && c.followers <= 200000
     );
 
     if (newResults.length === 0) {
-      return NextResponse.json({ message: "신규 없음", count: 0 });
+      return NextResponse.json({ message: "신규 없음", count: 0, crawled: results.length });
     }
 
-    // DM 문구 생성 + 배치 저장
-    const toInsert = newResults.map((c) => ({
+    const toInsert = newResults.map((c, i) => ({
       name: c.name,
       instagram: c.instagram,
       followers: c.followers,
       category: c.category,
-      dm_message: generateDm(c.name),
+      dm_message: generateDm(c.name, i),
       dm_status: "pending",
     }));
 
